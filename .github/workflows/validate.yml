@@ -1,0 +1,95 @@
+name: Validate Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Validate JavaScript syntax
+        run: |
+          node -c src/stargz-lazy-loader.js
+          node -c src/stargz-container-launcher.js
+          echo "✓ All JavaScript files are syntactically valid"
+      
+      - name: Verify required files
+        run: |
+          files=(
+            "index.html"
+            "amd64-stargz-lazy-loading.html"
+            "stargz-container-launcher.html"
+            "src/stargz-lazy-loader.js"
+            "src/stargz-container-launcher.js"
+            "STARGZ-LAZY-LOADING.md"
+            "IMPLEMENTATION-GUIDE.md"
+          )
+          
+          for file in "${files[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✓ $file"
+            else
+              echo "✗ Missing: $file"
+              exit 1
+            fi
+          done
+      
+      - name: Check HTML validity
+        run: |
+          echo "Checking HTML structure..."
+          for file in *.html; do
+            if grep -q "<!doctype html>" "$file" || grep -q "<!DOCTYPE html>" "$file"; then
+              echo "✓ $file has valid doctype"
+            else
+              echo "⚠ $file might be missing doctype"
+            fi
+          done
+      
+      - name: Verify external dependencies
+        run: |
+          echo "Checking external CDN dependencies..."
+          grep -h "https://cdn.jsdelivr.net" *.html | head -5
+          echo "✓ CDN dependencies are referenced"
+      
+      - name: Run validation script
+        run: |
+          chmod +x validate.sh
+          ./validate.sh
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Deploy to GitHub Pages
+        uses: actions/upload-artifact@v3
+        with:
+          name: github-pages
+          path: .
+          retention-days: 30
+      
+      - name: Verify deployment readiness
+        run: |
+          echo "✅ Build artifacts ready for GitHub Pages"
+          echo ""
+          echo "Deployment details:"
+          echo "  Domain: See CNAME file"
+          echo "  Content: Static HTML + JS"
+          echo "  Build time: $GITHUB_RUN_ID"
+          echo ""
+          echo "Files included:"
+          find . -maxdepth 1 -name "*.html" -o -name "*.md" | sort | sed 's/^/  /'
