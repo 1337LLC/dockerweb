@@ -31,7 +31,7 @@ ENTRYPOINT ["vim"]</code></pre>
 
 <p>Running the following in the container will get the contents of the demo page over HTTP.</p>
 
-<pre><code>:!wget -O - https://ktock.github.io/container2wasm-demo/</code></pre>
+<pre><code>:!wget -O - https://ktock.github.io/dockerweb/</code></pre>
 
 <h2>Note</h2>
 
@@ -48,7 +48,7 @@ ENTRYPOINT ["vim"]</code></pre>
 
 <hr>
 
-<p>Tested on Google Chrome 116.0.5845.187. More info including docs and source code is available from <a href="https://github.com/ktock/container2wasm">container2wasm</a> repo. This page is served from <a href="https://github.com/ktock/container2wasm-demo">container2wasm-demo repo</a> as GitHub Pages.</p>
+<p>Tested on Google Chrome 116.0.5845.187. More info including docs and source code is available from <a href="https://github.com/ktock/container2wasm">container2wasm</a> repo. This page is served from <a href="https://github.com/ktock/dockerweb">dockerweb repo</a> as GitHub Pages.</p>
 
 <p><a href="./index.html">Back to top</a></p>
 
@@ -58,7 +58,7 @@ ENTRYPOINT ["vim"]</code></pre>
 <script src="https://cdn.jsdelivr.net/npm/xterm-pty@0.9.4/index.js"></script>
 <script src="./src/stack.js"></script>
 <script src="./worker.js"></script>
-<script>startWasi("terminal-amd64-vim", "./src/worker.js"+location.search, location.origin + "/container2wasm-demo" + "/containers/amd64-vim-wasi-container", 3);</script>
+<script>startWasi("terminal-amd64-vim", "./src/worker.js"+location.search, location.origin + "/dockerweb" + "/containers/amd64-vim-wasi-container", 3);</script>
 </body>
 
 </html>

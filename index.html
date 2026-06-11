@@ -28,14 +28,14 @@
 </tr>
 
 <tr>
-<td><a href="https://github.com/ktock/container2wasm-demo/tree/main/src/amd64-debian-wasi">Debian</a></td>
+<td><a href="https://github.com/ktock/dockerweb/tree/main/src/amd64-debian-wasi">Debian</a></td>
 <td><pre><code>FROM debian:sid-slim
 RUN apt-get update && apt-get install -y curl</code></pre></td>
 <td><a href="./amd64-debian-wasi.html">start</a>(200MB)</td>
 </tr>
 
 <tr>
-<td><a href="https://github.com/ktock/container2wasm-demo/tree/main/src/amd64-python-wasi">Python</a></td>
+<td><a href="https://github.com/ktock/dockerweb/tree/main/src/amd64-python-wasi">Python</a></td>
 <td>
 <pre><code>python:3.11-alpine</code></pre>
 </td>
@@ -43,7 +43,7 @@ RUN apt-get update && apt-get install -y curl</code></pre></td>
 </tr>
 
 <tr>
-<td><a href="https://github.com/ktock/container2wasm-demo/tree/main/src/amd64-vim-wasi">Vim</a></td>
+<td><a href="https://github.com/ktock/dockerweb/tree/main/src/amd64-vim-wasi">Vim</a></td>
 <td>
 <pre><code>FROM alpine:3.18
 RUN apk add --no-cache vim
@@ -70,7 +70,7 @@ ENTRYPOINT ["vim"]</code></pre>
 </tr>
 
 <tr>
-<td><a href="https://github.com/ktock/container2wasm-demo/tree/main/src/riscv64-debian">Debian</a></td>
+<td><a href="https://github.com/ktock/dockerweb/tree/main/src/riscv64-debian">Debian</a></td>
 <td>
 <pre><code>FROM riscv64/alpine:20230208
 RUN apt-get update && apt-get install -y curl</code></pre>
@@ -79,7 +79,7 @@ RUN apt-get update && apt-get install -y curl</code></pre>
 </tr>
 
 <tr>
-<td><a href="https://github.com/ktock/container2wasm-demo/tree/main/src/riscv64-python">Python</a></td>
+<td><a href="https://github.com/ktock/dockerweb/tree/main/src/riscv64-python">Python</a></td>
 <td>
 <pre><code>FROM riscv64/alpine:20230208
 RUN apk add --no-cache python3
@@ -89,7 +89,7 @@ ENTRYPOINT ["python3"]</code></pre>
 </tr>
 
 <tr>
-<td><a href="https://github.com/ktock/container2wasm-demo/tree/main/src/riscv64-vim">Vim</a></td>
+<td><a href="https://github.com/ktock/dockerweb/tree/main/src/riscv64-vim">Vim</a></td>
 <td>
 <pre><code>FROM riscv64/alpine:20230208
 RUN apk add --no-cache vim
@@ -106,7 +106,7 @@ ENTRYPOINT ["vim"]</code></pre>
 
 <p>NOTE: They are compiled as WASI images and run on browser via polyfill.</p>
 
-<p>More info including docs and source code is available from <a href="https://github.com/ktock/container2wasm">container2wasm</a> repo. This page is served from <a href="https://github.com/ktock/container2wasm-demo">container2wasm-demo repo</a> as GitHub Pages.</p>
+<p>More info including docs and source code is available from <a href="https://github.com/ktock/container2wasm">container2wasm</a> repo. This page is served from <a href="https://github.com/ktock/dockerweb">dockerweb repo</a> as GitHub Pages.</p>
 
 </main>
 </body>

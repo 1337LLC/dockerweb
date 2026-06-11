@@ -32,7 +32,7 @@ ENTRYPOINT ["python3"]</code></pre>
 <p>Running the following in the container will get the contents of the demo page over HTTP.</p>
 
 <pre><code>import urllib.request
-r = urllib.request.Request('https://ktock.github.io/container2wasm-demo/')
+r = urllib.request.Request('https://ktock.github.io/dockerweb/')
 with urllib.request.urlopen(r) as response:
     body = response.read()
     print(body.decode('utf-8'))</code></pre>
@@ -52,7 +52,7 @@ with urllib.request.urlopen(r) as response:
 
 <hr>
 
-<p>Tested on Google Chrome 116.0.5845.187. More info including docs and source code is available from <a href="https://github.com/ktock/container2wasm">container2wasm</a> repo. This page is served from <a href="https://github.com/ktock/container2wasm-demo">container2wasm-demo repo</a> as GitHub Pages.</p>
+<p>Tested on Google Chrome 116.0.5845.187. More info including docs and source code is available from <a href="https://github.com/ktock/container2wasm">container2wasm</a> repo. This page is served from <a href="https://github.com/ktock/dockerweb">dockerweb repo</a> as GitHub Pages.</p>
 
 <p><a href="./index.html">Back to top</a></p>
 
@@ -62,7 +62,7 @@ with urllib.request.urlopen(r) as response:
 <script src="https://cdn.jsdelivr.net/npm/xterm-pty@0.9.4/index.js"></script>
 <script src="./src/stack.js"></script>
 <script src="./worker.js"></script>
-<script>startWasi("terminal-riscv64-python", "./src/worker.js"+location.search, location.origin + "/container2wasm-demo" + "/containers/riscv64-python-wasi-container", 2);</script>
+<script>startWasi("terminal-riscv64-python", "./src/worker.js"+location.search, location.origin + "/dockerweb" + "/containers/riscv64-python-wasi-container", 2);</script>
 </body>
 
 </html>
