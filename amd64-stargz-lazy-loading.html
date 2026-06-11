@@ -1,0 +1,247 @@
+<!doctype html>
+<html>
+<head>
+<title>STARGZ Lazy Loading Demo (x86_64)</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.1.0/css/xterm.css">
+<style>
+  .metrics {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+  }
+  .metric-item {
+    margin: 8px 0;
+    font-family: monospace;
+  }
+  .progress-bar-animated {
+    animation: progress-bar-stripes 1s linear infinite;
+  }
+  .loading-info {
+    background-color: #e7f3ff;
+    padding: 10px;
+    border-left: 4px solid #2196F3;
+    margin: 10px 0;
+  }
+</style>
+</head>
+<body>
+<main class="container">
+
+<h1>STARGZ Lazy Loading Demo (x86_64)</h1>
+
+<p>Example of running Docker images lazily on browser using <a href="https://github.com/containerd/stargz-snapshotter">STARGZ format</a> and <a href="https://github.com/ktock/container2wasm">container2wasm</a>.</p>
+
+<h2>What is STARGZ Lazy Loading?</h2>
+
+<p><strong>STARGZ</strong> (Seekable TAR GZ) is a container image format that enables <strong>lazy loading</strong—only downloading the necessary layers and files when they're actually needed, rather than downloading the entire image upfront. This is key to achieving high performance when loading arbitrary Docker images in the browser.</p>
+
+<ul>
+<li><strong>Faster Startup:</strong> Begin running containers immediately without waiting for the full multi-gigabyte image to download.</li>
+<li><strong>Reduced Bandwidth:</strong> Only download the layers and files your application actually uses.</li>
+<li><strong>On-Demand Content:</strong> Additional layers are fetched transparently as needed during execution.</li>
+<li><strong>Browser-Native:</strong> Leverages HTTP range requests (supported by all modern browsers) for efficient streaming.</li>
+</ul>
+
+<p>For more information, see <a href="https://github.com/stargz-containers">stargz-containers</a> for pre-built STARGZ-compatible images.</p>
+
+<h2>How to Use Pre-built STARGZ Images</h2>
+
+<p>STARGZ-compatible images are available from the <a href="https://github.com/orgs/stargz-containers/packages">stargz-containers organization packages</a>. These images can be:</p>
+
+<ol>
+<li><strong>Converted to WASM:</strong> Use <a href="https://github.com/ktock/container2wasm">container2wasm</a> to convert STARGZ images to WebAssembly format.</li>
+<li><strong>Chunked:</strong> Split into smaller chunks for progressive browser loading.</li>
+<li><strong>Deployed:</strong> Serve chunks over HTTP with proper range request headers.</li>
+<li><strong>Loaded Lazily:</strong> Browser fetches only needed chunks on-demand.</li>
+</ol>
+
+<h2>Container Configuration</h2>
+
+<div class="card">
+<div class="card-body">
+<h5 class="card-title">Source STARGZ Image</h5>
+<pre><code>ghcr.io/stargz-containers/alpine:latest
+(or any image from stargz-containers with eStargz format enabled)</code></pre>
+</div>
+</div>
+
+<h2>Live Terminal Demo</h2>
+
+<p>This demo streams container layers on-demand. Watch the metrics below to see which chunks are being loaded:</p>
+
+<div class="loading-info">
+  <strong>Loading Information:</strong> Chunks are loaded progressively as needed. You can interact with the container immediately while additional layers stream in the background.
+</div>
+
+<div class="d-inline-block mb-3" id="terminal-stargz-lazy"></div>
+
+<p>
+  <a href="?" class="btn btn-sm btn-primary">[launch ENTRYPOINT]</a> 
+  <a href="?args=sh" class="btn btn-sm btn-primary">[launch shell (sh)]</a> 
+  <a href="?net=none" class="btn btn-sm btn-primary">[disable networking]</a>
+</p>
+
+<p><em>Note: It can take some time to load and start the container. The first command you run may trigger additional layer downloads.</em></p>
+
+<h2>Loading Metrics</h2>
+
+<div class="metrics">
+  <div class="metric-item"><strong>Chunks Loaded:</strong> <span id="chunks-loaded">0</span> / <span id="chunks-total">0</span></div>
+  <div class="metric-item"><strong>Data Downloaded:</strong> <span id="data-downloaded">0 MB</span> / <span id="data-total">0 MB</span></div>
+  <div class="metric-item"><strong>Load Progress:</strong>
+    <div class="progress mt-2">
+      <div id="load-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+    </div>
+  </div>
+  <div class="metric-item"><strong>Status:</strong> <span id="load-status">Initializing...</span></div>
+</div>
+
+<h2>Example Commands</h2>
+
+<p>Try running these commands in the container to see lazy loading in action:</p>
+
+<pre><code># List installed packages
+apk info
+
+# Run a simple HTTP request
+wget https://www.example.com/index.html -O - | head -20
+
+# Use Python (if installed)
+python3 --version
+
+# Check available disk space
+df -h</code></pre>
+
+<h2>How It Works</h2>
+
+<ol>
+<li><strong>Initial Setup:</strong> Container metadata and essential layers load first, allowing immediate interaction.</li>
+<li><strong>On-Demand Fetching:</strong> When a file or library is accessed, the browser fetches only that chunk via HTTP range requests.</li>
+<li><strong>Transparent Loading:</strong> Additional layers stream in the background without blocking container execution.</li>
+<li><strong>Efficient Caching:</strong> Downloaded chunks are cached in memory for reuse during the session.</li>
+</ol>
+
+<h2>Performance Benefits</h2>
+
+<ul>
+<li><strong>Instant Start:</strong> Container begins running in milliseconds, not seconds.</li>
+<li><strong>Minimal Initial Bandwidth:</strong> Only a few MB needed to start vs. hundreds of MB for full download.</li>
+<li><strong>Scalability:</strong> Hundreds of users can load containers simultaneously without server overload.</li>
+<li><strong>Bandwidth Efficiency:</strong> Unused layers and files are never downloaded.</li>
+</ul>
+
+<h2>Networking</h2>
+
+<p>Container networking operates via an HTTP(S) proxy running in the browser:</p>
+
+<ul>
+<li><code>http_proxy</code>, <code>https_proxy</code>, <code>HTTP_PROXY</code>, <code>HTTPS_PROXY</code> are configured to <code>http://192.168.127.253:80</code></li>
+<li>Proxy relays requests using the browser's Fetch API</li>
+<li>Subject to browser CORS policies and limitations</li>
+<li>For unrestricted networking, see <a href="https://github.com/ktock/container2wasm">container2wasm</a> documentation</li>
+</ul>
+
+<h2>Building Your Own STARGZ Images</h2>
+
+<p>To convert your own Docker images to STARGZ format:</p>
+
+<pre><code># 1. Install eStargz tools
+# See: https://github.com/containerd/stargz-snapshotter
+
+# 2. Convert an image to eStargz format
+# nerdctl run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+#   ghcr.io/containerd/stargz-snapshotter:latest \
+#   ctr-remote images convert your-image:tag your-image:stargz
+
+# 3. Convert to WASM using container2wasm
+# container2wasm --stargz your-image:stargz your-image.wasm
+
+# 4. Split into chunks (optional)
+# split -b 100MB your-image.wasm your-image-chunk-</code></pre>
+
+<h2>Advanced Usage</h2>
+
+<h3>Loading from URL</h3>
+
+<p>To load a STARGZ image from a custom URL:</p>
+
+<pre><code>// Modify the script call at the bottom to include your image URL
+startLazyWasi("terminal-stargz-lazy", 
+  "./src/worker.js"+location.search, 
+  "https://your-server.com/your-image-wasm", 
+  5, // number of chunks
+  {
+    fetchProgress: function(loaded, total) {
+      console.log(`Downloaded: ${loaded}/${total} bytes`);
+    }
+  });</code></pre>
+
+<h3>Custom Chunk Loading</h3>
+
+<p>Implement custom chunk loading logic for advanced use cases like:</p>
+
+<ul>
+<li>Prioritizing specific chunks based on execution patterns</li>
+<li>Integrating with CDNs or edge networks</li>
+<li>Implementing retry logic with exponential backoff</li>
+<li>Measuring and optimizing performance metrics</li>
+</ul>
+
+<hr>
+
+<p><strong>Resources:</strong></p>
+<ul>
+<li><a href="https://github.com/ktock/container2wasm">container2wasm</a> - Container to WebAssembly converter</li>
+<li><a href="https://github.com/containerd/stargz-snapshotter">STARGZ Snapshotter</a> - Lazy-loading snapshotter for containerd</li>
+<li><a href="https://github.com/stargz-containers">stargz-containers</a> - Pre-built STARGZ container images</li>
+<li><a href="https://github.com/moby/buildkit">BuildKit</a> - Container build toolkit with eStargz support</li>
+</ul>
+
+<p>Tested on Google Chrome 116.0+. Requires browsers with SharedArrayBuffer support.</p>
+
+<p><a href="./index.html">Back to top</a></p>
+
+</main>
+
+<script src="./coi-serviceworker.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm@5.1.0/lib/xterm.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm-pty@0.9.4/index.js"></script>
+<script src="./src/stack.js"></script>
+<script src="./src/stargz-lazy-loader.js"></script>
+<script src="./worker.js"></script>
+<script>
+// Initialize the lazy loading demo with progress tracking
+startLazyWasi("terminal-stargz-lazy", 
+  "./src/worker.js"+location.search, 
+  location.origin + "/dockerweb" + "/containers/amd64-debian-wasi-container", 
+  5,
+  {
+    onChunkLoad: function(chunkIndex, totalChunks, bytesLoaded, totalBytes) {
+      // Update metrics display
+      document.getElementById('chunks-loaded').textContent = chunkIndex + 1;
+      document.getElementById('chunks-total').textContent = totalChunks;
+      document.getElementById('data-downloaded').textContent = (bytesLoaded / (1024*1024)).toFixed(1);
+      document.getElementById('data-total').textContent = (totalBytes / (1024*1024)).toFixed(1);
+      
+      const percentage = Math.round((bytesLoaded / totalBytes) * 100);
+      document.getElementById('load-progress-bar').style.width = percentage + '%';
+      document.getElementById('load-status').textContent = 'Loading: ' + percentage + '%';
+      
+      if (bytesLoaded === totalBytes) {
+        document.getElementById('load-status').textContent = 'Ready!';
+      }
+    },
+    onReady: function() {
+      document.getElementById('load-status').textContent = 'Container Running';
+      document.getElementById('load-progress-bar').style.width = '100%';
+      document.getElementById('load-progress-bar').classList.remove('progress-bar-animated');
+    }
+  }
+);
+</script>
+</body>
+</html>

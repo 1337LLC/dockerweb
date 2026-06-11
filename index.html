@@ -14,6 +14,11 @@
 
 <p>Examples of running Linux-based containers on browser using <a href="https://github.com/ktock/container2wasm">container2wasm</a>.</p>
 
+<section class="alert alert-info mb-4">
+  <h4>🚀 New: STARGZ Lazy Loading</h4>
+  <p>Try our new <strong><a href="./stargz-container-launcher.html">Container Launcher</a></strong> to run arbitrary Docker images with lazy loading! No image modification needed - select any STARGZ-compatible image from the <a href="https://github.com/stargz-containers">stargz-containers registry</a> and launch it instantly in your browser.</p>
+</section>
+
 <section>
 
 <h2>x86_64 containers demo</h2>
@@ -50,6 +55,17 @@ RUN apk add --no-cache vim
 ENTRYPOINT ["vim"]</code></pre>
 </td>
 <td><a href="./amd64-vim-wasi.html">start</a>(130MB)</td>
+</tr>
+
+<tr>
+<td><a href="https://github.com/stargz-containers">STARGZ Lazy Loading</a></td>
+<td>
+<pre><code>stargz-containers images
+(lazy-loaded with progressive
+streaming from HTTP range
+requests)</code></pre>
+</td>
+<td><a href="./amd64-stargz-lazy-loading.html">start</a>(on-demand)</td>
 </tr>
 
 </table>
@@ -104,7 +120,35 @@ ENTRYPOINT ["vim"]</code></pre>
 
 <hr>
 
-<p>NOTE: They are compiled as WASI images and run on browser via polyfill.</p>
+<h2>Lazy Loading with STARGZ</h2>
+
+<p>The <strong>STARGZ Lazy Loading</strong> demo showcases high-performance container execution by enabling <strong>lazy loading</strong> of container layers. This approach is ideal for scenarios where:</p>
+
+<ul>
+<li>You need to run arbitrary Docker images without pre-downloading the entire image (potentially gigabytes)</li>
+<li>You want to minimize initial load time and only fetch needed layers on-demand</li>
+<li>You want to leverage browser-native HTTP range requests for efficient streaming</li>
+<li>You're building a platform to let users run containers from <a href="https://github.com/stargz-containers">stargz-containers</a> easily</li>
+</ul>
+
+<p><strong>Key Benefits:</strong></p>
+<ul>
+<li><strong>Instant Startup:</strong> Begin running containers in milliseconds instead of waiting for multi-gigabyte downloads</li>
+<li><strong>Bandwidth Efficiency:</strong> Only download the layers and files that are actually used</li>
+<li><strong>On-Demand Streaming:</strong> Additional layers are fetched transparently as needed during execution</li>
+<li><strong>Scalability:</strong> Many users can load containers simultaneously without overwhelming servers</li>
+</ul>
+
+<p>For implementation details and to build your own STARGZ-compatible images, see:</p>
+<ul>
+<li><a href="https://github.com/containerd/stargz-snapshotter">STARGZ Snapshotter</a> - Lazy-loading snapshotter for containerd</li>
+<li><a href="https://github.com/stargz-containers">stargz-containers</a> - Pre-built STARGZ container images</li>
+<li><a href="https://github.com/ktock/container2wasm">container2wasm</a> - Container to WebAssembly converter with STARGZ support</li>
+</ul>
+
+<hr>
+
+<p>NOTE: Containers are compiled as WASI images and run on browser via polyfill. STARGZ-enabled demos support progressive layer loading via HTTP range requests.</p>
 
 <p>More info including docs and source code is available from <a href="https://github.com/ktock/container2wasm">container2wasm</a> repo. This page is served from <a href="https://github.com/ktock/dockerweb">dockerweb repo</a> as GitHub Pages.</p>
 
