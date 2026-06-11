@@ -40,22 +40,29 @@ function fetchChunks(f) {
     var chunks = numchunks;
     var format = s => prefix + s + '.wasm';
     var files = [];
-    for (i = 0; i < chunks; i++) {
+    for (var i = 0; i < chunks; i++) {
         var s = i.toString();
         while (s.length < 2) s = "0" + s;
         files[i] = s;
     }
     files = files.map(format);
     var list = [];
-    files.forEach(file => list.push(fetch(file)));
-    var results = [];
-    var blob;
-    Promise.all(list).then(resps => {
-        resps.forEach(r => results.push(r['arrayBuffer']()));
-        Promise.all(results).then(ab => {
-            blob = new Blob(ab);
-            blob.arrayBuffer().then(f);
-        })
+    files.forEach(file => {
+        list.push(
+            fetch(file).then(resp => {
+                if (!resp.ok) {
+                    throw new Error(`Failed to fetch ${file}: ${resp.status} ${resp.statusText}`);
+                }
+                return resp.arrayBuffer();
+            })
+        );
+    });
+    Promise.all(list).then(buffers => {
+        var blob = new Blob(buffers, { type: 'application/wasm' });
+        return blob.arrayBuffer();
+    }).then(f).catch(error => {
+        console.error('fetchChunks failed for', prefix, error);
+        throw error;
     });
 }
 
