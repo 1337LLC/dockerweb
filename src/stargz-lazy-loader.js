@@ -67,7 +67,7 @@ function startLazyWasi(elemId, workerFileName, imageNamePrefix, numChunks, optio
     var netParam = getNetParam();
     if (!netParam || netParam.mode != 'none') {
       lazyStackWorker = new Worker("./src/stack-worker.js"+location.search);
-      nwStack = newStack(lazyWorker, imageNamePrefix, chunks, new URL("./src/c2w-net-proxy.wasm", location.href).href);
+      nwStack = newStack(lazyWorker, imageNamePrefix, chunks, lazyStackWorker, new URL("./src/c2w-net-proxy.wasm", location.href).href);
     }
     if (!nwStack) {
       lazyWorker.postMessage({type: "init", imagename: imageNamePrefix, chunks: chunks});

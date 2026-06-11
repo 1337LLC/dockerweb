@@ -18,7 +18,7 @@ function startWasi(elemId, workerFileName, workerImageNamePrefix, workerImageChu
     var nwStack;
     var netParam = getNetParam();
     if (!netParam || netParam.mode != 'none') {
-        stackWorker = new Worker("./src/stack-worker.js"+location.search);
+        stackWorker = new Worker(new URL("./stack-worker.js", location.href).href + location.search);
         nwStack = newStack(worker, workerImageNamePrefix, workerImageChunks, stackWorker, new URL("./src/c2w-net-proxy.wasm", location.href).href);
     }
     if (!nwStack) {
