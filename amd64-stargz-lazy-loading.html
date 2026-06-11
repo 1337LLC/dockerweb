@@ -217,7 +217,7 @@ startLazyWasi("terminal-stargz-lazy",
 // Initialize the lazy loading demo with progress tracking
 startLazyWasi("terminal-stargz-lazy", 
   "./src/worker.js"+location.search, 
-  location.origin + "/containers/amd64-debian-wasi-container", 
+  new URL("./containers/amd64-debian-wasi-container", location.href).href,
   5,
   {
     onChunkLoad: function(chunkIndex, totalChunks, bytesLoaded, totalBytes) {
